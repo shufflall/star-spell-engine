@@ -1,0 +1,23 @@
+{
+  "name": "spell-caster",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "vfx:export": "tsx scripts/export-vfx.ts"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.1",
+    "tsx": "^4.22.3",
+    "typescript": "~6.0.2",
+    "vite": "^5.4.11"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "three": "^0.184.0",
+    "three.quarks": "^0.17.1"
+  }
+}

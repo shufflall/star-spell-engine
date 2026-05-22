@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spell Caster</title>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <div id="loading" class="overlay">
+      <div class="loading-inner">
+        <p class="loading-title">正在连接魔网…</p>
+        <div class="rune-row loading-runes">
+          <span class="rune-glyph" data-loading-rune>火</span>
+          <span class="rune-glyph" data-loading-rune>水</span>
+          <span class="rune-glyph" data-loading-rune>风</span>
+          <span class="rune-glyph" data-loading-rune>土</span>
+          <span class="rune-glyph" data-loading-rune>雷</span>
+          <span class="rune-glyph" data-loading-rune>冰</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="game-ui" class="overlay hidden">
+      <header class="hud-top">
+        <h1>Spell Caster</h1>
+        <p id="hint-text" class="hint">拖拽旋转 · 起点南侧高空 · 俯射场地中心 · 回车施法</p>
+        <button id="camera-mode-btn" type="button" class="camera-mode-btn">第一人称</button>
+      </header>
+
+      <div class="rune-panel">
+        <span class="rune" data-rune="fire">火</span>
+        <span class="rune" data-rune="water">水</span>
+        <span class="rune" data-rune="wind">风</span>
+        <span class="rune" data-rune="earth">土</span>
+        <span class="rune" data-rune="thunder">雷</span>
+        <span class="rune" data-rune="ice">冰</span>
+      </div>
+
+      <div class="cast-bar">
+        <input
+          id="spell-input"
+          type="text"
+          maxlength="64"
+          placeholder="火/火球/火柱直线/水环定点/冰雨/雷束/岩球抛物…"
+          autocomplete="off"
+        />
+        <button id="cast-btn" type="button">施法</button>
+      </div>
+
+      <p id="spell-summary" class="spell-summary"></p>
+      <p id="spell-error" class="spell-error"></p>
+    </div>
+
+    <div id="crosshair" class="crosshair hidden" aria-hidden="true"></div>
+    <p id="pointer-lock-hint" class="pointer-lock-hint hidden">点击画面开始第一人称</p>
+
+    <div id="damage-floats"></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

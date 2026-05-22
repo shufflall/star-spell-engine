@@ -1,0 +1,409 @@
+{
+  "metadata": {
+    "version": 4.7,
+    "type": "Object",
+    "generator": "Object3D.toJSON"
+  },
+  "geometries": [
+    {
+      "uuid": "662b7388-4c74-46a0-bd66-9636930f575f",
+      "type": "PlaneGeometry",
+      "width": 1,
+      "height": 1,
+      "widthSegments": 1,
+      "heightSegments": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "94d1d2cb-5331-4a95-8aaf-f6fbdb0a9903",
+      "type": "MeshBasicMaterial",
+      "color": 13430527,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "side": 2,
+      "transparent": true,
+      "blendColor": 0,
+      "depthWrite": false
+    },
+    {
+      "uuid": "32ac72ea-8ff1-4d22-be79-ac173368872c",
+      "type": "MeshBasicMaterial",
+      "color": 16777215,
+      "envMapRotation": [
+        0,
+        0,
+        0,
+        "XYZ"
+      ],
+      "reflectivity": 1,
+      "refractionRatio": 0.98,
+      "side": 2,
+      "transparent": true,
+      "blendColor": 0,
+      "depthWrite": false
+    }
+  ],
+  "object": {
+    "uuid": "43df718b-c844-4130-9a72-87f661e6f8f7",
+    "type": "QuarksPrefab",
+    "layers": 1,
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "up": [
+      0,
+      1,
+      0
+    ],
+    "children": [
+      {
+        "uuid": "5bd261d6-b8f3-4d09-857e-99fcf4fb650f",
+        "type": "ParticleEmitter",
+        "layers": 1,
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "ps": {
+          "version": "3.0",
+          "autoDestroy": false,
+          "looping": false,
+          "prewarm": false,
+          "duration": 3,
+          "shape": {
+            "type": "sphere",
+            "radius": 0.6,
+            "arc": 6.283185307179586,
+            "thickness": 1,
+            "mode": 0,
+            "spread": 0,
+            "speed": {
+              "type": "ConstantValue",
+              "value": 1
+            }
+          },
+          "startLife": {
+            "type": "IntervalValue",
+            "a": 0.8,
+            "b": 1.6
+          },
+          "startSpeed": {
+            "type": "IntervalValue",
+            "a": 0.2,
+            "b": 0.8
+          },
+          "startRotation": {
+            "type": "ConstantValue",
+            "value": 0
+          },
+          "startSize": {
+            "type": "IntervalValue",
+            "a": 0.08,
+            "b": 0.22
+          },
+          "startColor": {
+            "type": "ConstantColor",
+            "color": {
+              "r": 0.85,
+              "g": 0.95,
+              "b": 1,
+              "a": 0.9
+            }
+          },
+          "emissionOverTime": {
+            "type": "ConstantValue",
+            "value": 40
+          },
+          "emissionOverDistance": {
+            "type": "ConstantValue",
+            "value": 0
+          },
+          "emissionBursts": [],
+          "onlyUsedByOther": false,
+          "instancingGeometry": "662b7388-4c74-46a0-bd66-9636930f575f",
+          "renderOrder": 0,
+          "renderMode": 0,
+          "rendererEmitterSettings": {},
+          "material": "94d1d2cb-5331-4a95-8aaf-f6fbdb0a9903",
+          "layers": 1,
+          "startTileIndex": {
+            "type": "ConstantValue",
+            "value": 0
+          },
+          "uTileCount": 1,
+          "vTileCount": 1,
+          "blendTiles": false,
+          "softParticles": false,
+          "softFarFade": 0,
+          "softNearFade": 0,
+          "behaviors": [
+            {
+              "type": "ColorOverLife",
+              "color": {
+                "type": "Gradient",
+                "color": {
+                  "type": "CLinearFunction",
+                  "subType": "Color",
+                  "keys": [
+                    {
+                      "value": {
+                        "r": 0.9,
+                        "g": 0.95,
+                        "b": 1
+                      },
+                      "pos": 0
+                    },
+                    {
+                      "value": {
+                        "r": 0.5,
+                        "g": 0.75,
+                        "b": 1
+                      },
+                      "pos": 1
+                    }
+                  ]
+                },
+                "alpha": {
+                  "type": "CLinearFunction",
+                  "subType": "Number",
+                  "keys": [
+                    {
+                      "value": 0.95,
+                      "pos": 0
+                    },
+                    {
+                      "value": 0.5,
+                      "pos": 1
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "SizeOverLife",
+              "size": {
+                "type": "PiecewiseBezier",
+                "functions": [
+                  {
+                    "function": {
+                      "p0": 1,
+                      "p1": 0.6,
+                      "p2": 0.15,
+                      "p3": 0
+                    },
+                    "start": 0
+                  }
+                ]
+              }
+            }
+          ],
+          "worldSpace": true
+        }
+      },
+      {
+        "uuid": "241f4ba9-6ec9-4532-a7e9-59285cc96ab4",
+        "type": "ParticleEmitter",
+        "layers": 1,
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "ps": {
+          "version": "3.0",
+          "autoDestroy": false,
+          "looping": false,
+          "prewarm": false,
+          "duration": 2.5,
+          "shape": {
+            "type": "hemisphere",
+            "radius": 1.2,
+            "arc": 6.283185307179586,
+            "thickness": 1,
+            "mode": 0,
+            "spread": 0,
+            "speed": {
+              "type": "ConstantValue",
+              "value": 1
+            }
+          },
+          "startLife": {
+            "type": "IntervalValue",
+            "a": 0.6,
+            "b": 1.2
+          },
+          "startSpeed": {
+            "type": "ConstantValue",
+            "value": -0.6
+          },
+          "startRotation": {
+            "type": "ConstantValue",
+            "value": 0
+          },
+          "startSize": {
+            "type": "IntervalValue",
+            "a": 0.04,
+            "b": 0.1
+          },
+          "startColor": {
+            "type": "ConstantColor",
+            "color": {
+              "r": 0.95,
+              "g": 0.98,
+              "b": 1,
+              "a": 0.7
+            }
+          },
+          "emissionOverTime": {
+            "type": "ConstantValue",
+            "value": 50
+          },
+          "emissionOverDistance": {
+            "type": "ConstantValue",
+            "value": 0
+          },
+          "emissionBursts": [],
+          "onlyUsedByOther": false,
+          "instancingGeometry": "662b7388-4c74-46a0-bd66-9636930f575f",
+          "renderOrder": 0,
+          "renderMode": 0,
+          "rendererEmitterSettings": {},
+          "material": "32ac72ea-8ff1-4d22-be79-ac173368872c",
+          "layers": 1,
+          "startTileIndex": {
+            "type": "ConstantValue",
+            "value": 0
+          },
+          "uTileCount": 1,
+          "vTileCount": 1,
+          "blendTiles": false,
+          "softParticles": false,
+          "softFarFade": 0,
+          "softNearFade": 0,
+          "behaviors": [
+            {
+              "type": "ColorOverLife",
+              "color": {
+                "type": "Gradient",
+                "color": {
+                  "type": "CLinearFunction",
+                  "subType": "Color",
+                  "keys": [
+                    {
+                      "value": {
+                        "r": 0.9,
+                        "g": 0.95,
+                        "b": 1
+                      },
+                      "pos": 0
+                    },
+                    {
+                      "value": {
+                        "r": 0.5,
+                        "g": 0.75,
+                        "b": 1
+                      },
+                      "pos": 1
+                    }
+                  ]
+                },
+                "alpha": {
+                  "type": "CLinearFunction",
+                  "subType": "Number",
+                  "keys": [
+                    {
+                      "value": 0.95,
+                      "pos": 0
+                    },
+                    {
+                      "value": 0.5,
+                      "pos": 1
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "SizeOverLife",
+              "size": {
+                "type": "PiecewiseBezier",
+                "functions": [
+                  {
+                    "function": {
+                      "p0": 1,
+                      "p1": 0.6,
+                      "p2": 0.15,
+                      "p3": 0
+                    },
+                    "start": 0
+                  }
+                ]
+              }
+            }
+          ],
+          "worldSpace": true
+        }
+      }
+    ],
+    "animationData": []
+  }
+}
