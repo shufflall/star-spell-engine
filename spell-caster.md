@@ -1,4 +1,4 @@
-# Spell Caster — 西幻法师吟唱系统
+# Spell Caster — 魔法咒文系统
 
 > 基于浏览器的单机 Demo：咒语 → Web Worker 规则解析 → **实体×元素×运动** 粒子特效 + 元素反应 + 范围伤害。
 
