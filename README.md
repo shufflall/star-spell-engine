@@ -1,5 +1,10 @@
-# star-spell-engine
-Web-based spell casting engine: natural language → AI parsing → 3D VFX. Three.js + Web Worker + ONNX.
+# STAR — Ritual Incantation Engine
+
+> A browser-based spell casting simulation where players recite structured prayers 
+> to invoke elemental laws. Structure must be correct; the spell responds only to 
+> proper form, not intent.
+
+Low-tier: 4-anchor closed ring | Mid-tier: 6-anchor dual element | High-tier: Open loop stages
 
 # STAR — 魔法体系引擎
 
