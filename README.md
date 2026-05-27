@@ -1,8 +1,6 @@
 # STAR — Ritual Incantation Engine
 
-> A browser-based spell casting simulation where players recite structured prayers 
-> to invoke elemental laws. Structure must be correct; the spell responds only to 
-> proper form, not intent.
+"A spell crafting engine where players compose magic through procedural incantations — not preset spells. Each spell is built from combinatorial elements (entity × element × motion) parsed from natural language input, producing emergent magical effects in the browser."
 
 Low-tier: 4-anchor closed ring | Mid-tier: 6-anchor dual element | High-tier: Open loop stages
 
