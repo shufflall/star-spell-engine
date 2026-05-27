@@ -8,7 +8,7 @@ import { createSpellVfx } from '../effects/effectFactory';
 import { MagicVfxEffect } from '../vfx/magic/MagicVfxEffect';
 import { formatMagicLabel } from '../vfx/magic/resolveMagic';
 import { VfxLibrary } from '../vfx/VfxLibrary';
-import { motionTravelsToTarget } from '../vfx/magic/types';
+import { entityNeedsInstantImpact, motionNeedsImpact } from '../vfx/magic/types';
 
 const ELEMENT_COLORS: Record<ElementType, number> = {
   fire: 0xff5522,
@@ -101,8 +101,12 @@ export class SpellCaster {
     for (const effect of effects) {
       if (effect instanceof MagicVfxEffect) {
         const recipe = effect.recipe;
+        const instantAoE = entityNeedsInstantImpact(recipe.entity);
+        if (instantAoE) {
+          this.engine.addEffect(vfxLib.spawnMagicImpact(recipe, spell, target));
+        }
         effect.onImpact = (impactPos) => {
-          if (recipe && motionTravelsToTarget(recipe.motion)) {
+          if (recipe && motionNeedsImpact(recipe.motion) && !instantAoE) {
             this.engine.addEffect(vfxLib.spawnMagicImpact(recipe, spell, impactPos));
           }
           applyHits(impactPos);

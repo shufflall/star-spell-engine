@@ -1,5 +1,12 @@
 export type { MagicVfxRecipe, VfxEntityType, VfxMotionType } from './types';
-export { ENTITY_LABELS, MOTION_LABELS, motionTravelsToTarget } from './types';
+export {
+  ENTITY_LABELS,
+  MOTION_LABELS,
+  motionTravelsToTarget,
+  motionNeedsImpact,
+  entityNeedsInstantImpact,
+  entityPrefersStationary,
+} from './types';
 export { parseMagicLanguage } from './parseMagicLanguage';
 export {
   ELEMENT_DEFAULT_RECIPE,

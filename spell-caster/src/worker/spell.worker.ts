@@ -4,9 +4,9 @@ import { parseMagicLanguage } from '../vfx/magic/parseMagicLanguage';
 const ELEMENT_RULES: { type: ElementType; pattern: RegExp }[] = [
   { type: 'fire', pattern: /火|炎|烈|燃|焰/ },
   { type: 'water', pattern: /水|潮|流|涌/ },
-  { type: 'ice', pattern: /冰|霜|寒|冻/ },
+  { type: 'ice', pattern: /冰|霜|寒|冻|雪/ },
   { type: 'wind', pattern: /风|气|岚|飓|旋/ },
-  { type: 'earth', pattern: /土|地|岩|石|山/ },
+  { type: 'earth', pattern: /土|地|岩|石|山|泥|沼/ },
   { type: 'thunder', pattern: /雷|电|霆|闪/ },
 ];
 
@@ -25,7 +25,7 @@ function inferForm(text: string): FormType {
   if (/束|射线|光柱|激光/.test(text)) return 'beam';
   if (/球|珠|弹|orb/i.test(text)) return 'orb';
   if (/爆|轰|炸|碎|崩/.test(text)) return 'burst';
-  return 'burst';
+  return 'orb';
 }
 
 function baseDamage(potency: number, form: FormType): number {
@@ -52,19 +52,21 @@ function baseRadius(potency: number, form: FormType): number {
   return clamp(1.5 + potency * 0.8 * (formMul[form] ?? 2), 1, MAX_RADIUS);
 }
 
-/** 常见复合咒语：保证解析出正确双元素 */
+/**
+ * 双元素复合咒（不含单元素命名法术：暴雪/泥沼等走 magic 管线）
+ */
 const COMPOUND_HINTS: { pattern: RegExp; add: ElementType[] }[] = [
   { pattern: /风水|水龙卷|海啸|潮旋|水旋风/, add: ['water', 'wind'] },
   { pattern: /烈焰风暴|火龙卷|火旋风|风火/, add: ['fire', 'wind'] },
   { pattern: /雷火|火雷|雷霆火焰/, add: ['fire', 'thunder'] },
   { pattern: /感电|水雷|雷电之水/, add: ['water', 'thunder'] },
-  { pattern: /暴雪|冰雪|霜雨/, add: ['water', 'ice'] },
+  { pattern: /冰雪|霜雨|冰暴雪/, add: ['water', 'ice'] },
   { pattern: /冰火|火冰|蒸汽爆炸/, add: ['fire', 'ice'] },
   { pattern: /熔岩|岩浆|火土/, add: ['fire', 'earth'] },
   { pattern: /冰霜旋风|冰风|风冰/, add: ['ice', 'wind'] },
   { pattern: /震雷|雷土|大地之雷/, add: ['earth', 'thunder'] },
   { pattern: /雷火闪|火雷爆|焰雷/, add: ['fire', 'thunder'] },
-  { pattern: /泥沼|水土|洪流/, add: ['water', 'earth'] },
+  { pattern: /水土|洪流/, add: ['water', 'earth'] },
   { pattern: /沙尘|土风|尘旋/, add: ['earth', 'wind'] },
   { pattern: /冻土|冰土|霜裂/, add: ['earth', 'ice'] },
   { pattern: /冰雷|霜雷|碎冰雷/, add: ['ice', 'thunder'] },
@@ -75,17 +77,17 @@ export function parseByRules(text: string): SpellData {
   const trimmed = text.trim().slice(0, MAX_TEXT_LEN);
   const elems: ElementType[] = [];
 
+  for (const { type, pattern } of ELEMENT_RULES) {
+    if (pattern.test(trimmed) && !elems.includes(type)) {
+      elems.push(type);
+    }
+  }
+
   for (const { pattern, add } of COMPOUND_HINTS) {
     if (pattern.test(trimmed)) {
       for (const e of add) {
         if (!elems.includes(e)) elems.push(e);
       }
-    }
-  }
-
-  for (const { type, pattern } of ELEMENT_RULES) {
-    if (pattern.test(trimmed) && !elems.includes(type)) {
-      elems.push(type);
     }
   }
 
