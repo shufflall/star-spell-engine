@@ -12,9 +12,9 @@
 
 核心设计目标：
 - **主线程零阻塞**：解析在 Web Worker
-- **三元组组装魔法**：`entity × element × motion`，288 种单元素组合
+- **三元组组装魔法**：`entity × element × motion`，396 种单元素组合（6×11×6）
 - **咒语驱动**：显式写「球体」「抛物」「锥形」等，避免仅「火」就当成火球
-- **元素反应**：15 组双/三元素配方化复合特效
+- **元素反应**：16 条反应定义（15 组双元素 + 1 组三元素）配方化复合特效
 - **视觉**：three.quarks + `UnrealBloomPass`
 
 ---
@@ -88,7 +88,7 @@ spell-caster/
 │   │   ├── magic/                 # ★ 单元素核心
 │   │   │   ├── types.ts           # entity / motion / MagicVfxRecipe
 │   │   │   ├── parseMagicLanguage.ts
-│   │   │   ├── elementCatalog.ts  # 默认表、命名法术、288 矩阵
+│   │   │   ├── elementCatalog.ts  # 默认表、命名法术、396 矩阵
 │   │   │   ├── elementBodyVariants.ts
 │   │   │   ├── buildMagicBody.ts
 │   │   │   ├── buildMagicImpact.ts
@@ -132,10 +132,8 @@ spell-caster/
 ┌───────┐  ┌──────────────┐
 │ Worker│  │ Three.js 场景 │
 │ init  │  │ 初始化        │
-│ 加载   │  │ 灯光/地面/相机 │
-│ ONNX   │  └──────────────┘
-│ 模型   │
-└───┬───┘
+│       │  │ 灯光/地面/相机 │
+└───┬───┘  └──────────────┘
     │
     ▼
 Worker → Main: { type: 'ready' }
@@ -160,9 +158,12 @@ Main → Worker: { type: 'parse', text: '烈焰风暴' }
     │
     ▼
 Worker 内部:
-  ├─ ONNX 模型推理（~30ms WebGPU）
-  ├─ 围栏校验（数值 Clamp、黑名单过滤）
-  └─ 输出 SpellData
+  ├─ parseByRules（元素 / form / potency）
+  ├─ 单元素 → parseMagicLanguage → MagicVfxRecipe
+  ├─ 数值围栏（Clamp、长度上限）
+  └─ 输出 SpellData（confidence ≈ 0.35）
+
+  （规划）ONNX 推理 → 高置信度结果；低置信度时规则兜底
     │
     ▼
 Worker → Main: { type: 'spell', payload: SpellData }
@@ -256,12 +257,15 @@ flowchart TD
 
 ```typescript
 interface MagicVfxRecipe {
-  entity: 'sphere' | 'cone' | 'ring' | 'column' | 'disk' | 'beam' | 'fluid' | 'cloud';
+  entity: 'sphere' | 'cone' | 'ring' | 'column' | 'disk' | 'beam' | 'fluid' | 'cloud'
+        | 'barrier' | 'burst' | 'shatter';
   element: 'fire' | 'water' | 'ice' | 'wind' | 'earth' | 'thunder';
   motion: 'linear' | 'parabolic' | 'curve' | 'rotate' | 'stationary' | 'fallFromAbove';
   label?: string;
 }
 ```
+
+全矩阵：**6 × 11 × 6 = 396**（`buildSingleElementMatrix()`）；命名法术 **55** 条（`NAMED_SPELLS`）。
 
 | 运动 | 行为 | 伤害结算 |
 |------|------|----------|
@@ -275,7 +279,7 @@ interface MagicVfxRecipe {
 2. 咒语中的实体词（锥、球、柱、环…）与运动词（直线、抛物、旋转…）  
 3. 仅元素名 → `ELEMENT_DEFAULT_RECIPE`（如火=流体直线，非火球）
 
-**外观**（`buildMagicBody.ts` + `elementBodyVariants.ts`）：48 组元素×实体参数 + 副层（火星/水滴/冰屑/气流…）。
+**外观**（`buildMagicBody.ts` + `elementBodyVariants.ts`）：元素×实体外观参数表 + 副层（火星/水滴/冰屑/气流…）。
 
 **命中**（`buildMagicImpact.ts`）：弹道抵达时额外爆发粒子。
 
@@ -286,9 +290,11 @@ interface MagicVfxRecipe {
 | 鸟瞰 | `ORBIT_CAST_ORIGIN` (0, 9.5, -16) 南侧高空 | `ORBIT_CAST_CENTER` (0,0,0) |
 | 第一人称 | 相机略低 | 准星射线与地面交点 |
 
-### 元素反应（15 种）
+### 元素反应（16 条）
 
-双元素全覆盖（6 选 2 = 15），另含 `fire+wind+thunder`。配方在 `recipes/reactionRecipes.ts`，由 `VfxModuleRegistry` 叠层，`VfxComposer.composeVfx` 合成。
+双元素全覆盖（C(6,2)=15），另含三元素 `fire+wind+thunder`。配方在 `recipes/reactionRecipes.ts`，由 `VfxModuleRegistry` 叠层，`VfxComposer.composeVfx` 合成。
+
+> **与目标体系差异**：目标高阶禁止火+冰湮灭配对；Demo 中 `fire+ice` 已实现为「冰火消融」反应，供 RPG 演示。
 
 示例：`fire+wind` 烈焰旋风、`water+earth` 泥沼洪流、`ice+thunder` 冰雷碎击。
 
@@ -298,7 +304,9 @@ interface MagicVfxRecipe {
 
 ---
 
-## AI 模型设计
+## AI 模型设计（规划，尚未实现）
+
+当前 Worker 使用 `parseByRules` 规则引擎；以下为目标 ONNX 方案。
 
 ### 模型定位
 
@@ -346,13 +354,14 @@ interface MagicVfxRecipe {
 
 ## 性能优化策略
 
-| 层面 | 策略 | 预期效果 |
-|------|------|----------|
-| **加载** | ONNX 模型 + 音效资源预加载 | 运行时零网络请求 |
-| **Worker** | 单例模型，推理复用 Session | 30ms 内完成解析 |
-| **渲染** | 对象池复用粒子系统 | 避免频繁创建/销毁 Buffer |
-| **后期** | Bloom 分辨率降级（0.5x） | 移动端 60fps |
-| **内存** | BaseEffect.dispose() 显式释放 | 防止 GPU 内存泄漏 |
+| 层面 | 策略 | 状态 |
+|------|------|------|
+| **加载** | VFX JSON 预加载 | ✅ 已实现 |
+| **加载** | ONNX 模型 + 音效资源预加载 | 规划中 |
+| **Worker** | 单例模型，推理复用 Session | 规划中（当前规则解析 <1ms） |
+| **渲染** | 对象池复用粒子系统 | 规划中 |
+| **后期** | Bloom 分辨率降级（0.5x） | 规划中 |
+| **内存** | `BaseEffect.dispose()` 显式释放 | ✅ 已实现 |
 
 ---
 
@@ -364,9 +373,9 @@ interface MagicVfxRecipe {
 | **M1** | Worker 通信 + SpellData | ✅ |
 | **M2** | three.quarks 粒子 + Bloom | ✅ |
 | **M3** | 端到端施法闭环 | ✅ |
-| **M4** | 元素反应（15 组）+ 模块配方 | ✅ |
+| **M4** | 元素反应（16 条）+ 模块配方 | ✅ |
 | **M5** | 战斗 + 飘字 + 双相机 | ✅ |
-| **M6** | 单元素三元组 + 288 矩阵 + 弹道 | ✅ |
+| **M6** | 单元素三元组 + 396 矩阵 + 弹道 | ✅ |
 | **M7** | ONNX / 祷文结构 / LawRegistry | 规划中 |
 
 ---

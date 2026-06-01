@@ -172,7 +172,7 @@ export class Engine {
     this.activeController.onResize();
   };
 
-  /** 准星/屏幕中心射线落点（第一人称）或鼠标落点（鸟瞰） */
+  /** 施法落点：第一人称=准星射线与地面交点；鸟瞰=固定场地中心 ORBIT_CAST_CENTER */
   getCastPosition(out = new THREE.Vector3()): THREE.Vector3 {
     this.activeController.getCastRay(this.raycaster, this.camera);
     return this.activeController.resolveCastPoint(

@@ -221,15 +221,15 @@ interface PrayerParseResult {
 |------|------|------------------|
 | Web Worker 隔离解析 | ✅ | 将升级为 LM + 结构校验管线 |
 | 六元素 + 关键词提取 | ✅ | 对应法则中的元素语义，未分杀伤/动力 |
-| **单元素三元组特效** | ✅ | **实体 × 元素 × 运动**，288 组合可施放 |
+| **单元素三元组特效** | ✅ | **实体 × 元素 × 运动**，396 组合可施放 |
 | **咒语驱动实体/运动** | ✅ | 非「火→火球」硬编码；命名法术 + 关键词解析 |
-| 元素反应表（**15** 种双/三元素） | ✅ | 配方化模块组装 + 代码预制 |
+| 元素反应表（**16** 条：15 组双元素 + 1 组三元素） | ✅ | 配方化模块组装 + 代码预制 |
 | 粒子模块配方 `VfxRecipe` | ✅ | 反应/形态层叠；与三元组魔法管线并存 |
 | three.quarks 粒子 + Bloom | ✅ | `BatchedRenderer` 批渲染 |
 | 范围伤害 + 假人 | ✅ | 弹道类延迟至落点结算 |
 | 双相机 + 第一人称施法 | ✅ | 鸟瞰固定起点/落点，便于观察弹道 |
 | 全局回车确认施法 | ✅ | 输入框未聚焦时也可施法 |
-| 规则引擎兜底 | ✅ | 保留为 LM 离线/低置信度时的 fallback |
+| 规则引擎解析 | ✅ | **当前唯一解析路径**（关键词 + 命名表）；LM 接入后作低置信度 fallback |
 
 ### 7.1.1 单元素魔法特效（已实现）
 
@@ -243,17 +243,26 @@ interface PrayerParseResult {
 
 | 维度 | 可选值 | 说明 |
 |------|--------|------|
-| **实体** | `sphere` `cone` `ring` `column` `disk` `beam` `fluid` `cloud` | 发射器几何 |
+| **实体** | `sphere` `cone` `ring` `column` `disk` `beam` `fluid` `cloud` `barrier` `burst` `shatter` | 发射器几何 |
 | **元素** | 火水冰风土雷 | 颜色、材质、副粒子层 |
 | **运动** | `linear` `parabolic` `curve` `rotate` `stationary` `fallFromAbove` | 直线/抛物/曲线/旋转/定点/下落 |
 
-- **全矩阵**：6 × 8 × 6 = **288** 种组合（`buildSingleElementMatrix()`）
+- **全矩阵**：6 × 11 × 6 = **396** 种组合（`buildSingleElementMatrix()`，`SINGLE_ELEMENT_MATRIX_SIZE`）
 - **仅念元素**时的默认（非火球）：火/水→流体直线，冰→锥直线，风→柱旋转，土→盘定点，雷→束直线
-- **命名法术** 40+ 条：如火球、冰锥、旋风、雷束、暴雨、岩环定点等（见 `elementCatalog.ts`）
+- **命名法术** **55** 条：如火球、冰锥、旋风、雷束、暴雨、岩环定点等（见 `elementCatalog.ts` 的 `NAMED_SPELLS`）
 
 **鸟瞰观察模式**：起点固定南侧高空 `(0, 9.5, -16)`，落点固定场地中心 `(0, 0, 0)`，场景有蓝台标记与弹道示意线。
 
 **第一人称**：起点≈相机，落点=准星地面交点。
+
+### 7.1.2 Demo 与目标体系的已知差异
+
+| 差异点 | 目标体系 | 当前 Demo |
+|--------|----------|-----------|
+| 解析方式 | LM + 结构校验，规则兜底 | 仅规则引擎（`confidence ≈ 0.35`） |
+| 火+冰配对 | 高阶禁止（湮灭，不可控第三态） | 已实现 `fire+ice`「冰火消融」反应（RPG 演示向） |
+| 中阶职责 | 杀伤/动力元素分离 | 多元素走反应表，未分 kill/kinetic |
+| 形态 VFX | 由法则与声明驱动 | 单元素走三元组；多元素回退路径仍主要调 `form` 缩放 |
 
 ### 7.2 尚未实现（相对目标体系）
 
@@ -363,8 +372,11 @@ npm run preview
 
 ```
 STAR/
-├── README.md
-├── spell-caster.md
+├── README.md              # 魔法体系总览 + Demo 进度 + 路线图
+├── Introduce.md           # 世界观原则 + Demo 快速说明
+├── spell-caster.md        # 技术架构与数据流
+├── HISTORY.md             # 世界观设定「万律之音」
+├── LICENSE
 └── spell-caster/
     ├── src/
     │   ├── worker/spell.worker.ts     # 规则解析 + magic 三元组
@@ -373,7 +385,7 @@ STAR/
     │   │   ├── modules/               # 可叠层粒子模块
     │   │   ├── recipes/               # 反应/形态配方
     │   │   ├── builders/              # Quarks 预制与导出
-    │   │   └── reactions/             # 15 种元素反应表
+    │   │   └── reactions/             # 16 条元素反应表
     │   ├── core/                      # Engine、相机、施法落点
     │   ├── combat/
     │   └── ui/
@@ -385,7 +397,7 @@ STAR/
 
 ## 十一、开源协议
 
-本项目采用 **[MIT License](https://opensource.org/licenses/MIT)**。对外发布前建议在根目录添加 `LICENSE` 全文。
+本项目采用 **[MIT License](https://opensource.org/licenses/MIT)**，全文见仓库根目录 [`LICENSE`](LICENSE)。
 
 ---
 
@@ -420,5 +432,7 @@ STAR/
 
 | 文档 | 内容 |
 |------|------|
+| [`Introduce.md`](Introduce.md) | 魔法体系原则 + Demo 操作说明 |
 | [`spell-caster.md`](spell-caster.md) | 技术架构、数据流、ONNX 与性能 |
+| [`HISTORY.md`](HISTORY.md) | 世界观设定「万律之音」 |
 | [`spell-caster/package.json`](spell-caster/package.json) | 脚本与依赖版本 |
